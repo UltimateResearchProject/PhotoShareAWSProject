@@ -1,5 +1,3 @@
-# PhotoShareAWSProject
-PhotoShare is a secure, scalable, event-driven cloud application built on AWS using industry best practices.(Upgraded Version of KodeKloud Project)
 # 📸 PhotoShare – Production-Grade AWS Architecture (Terraform Ready)
 
 ![AWS](https://img.shields.io/badge/AWS-Cloud-orange)
@@ -11,15 +9,15 @@ PhotoShare is a secure, scalable, event-driven cloud application built on AWS us
 
 ## 🚀 Overview
 
-PhotoShare is a **secure, scalable, event-driven cloud application** built on AWS using industry best practices.
+PhotoShare is a **secure, scalable, event-driven cloud application** built on AWS using production-grade best practices.
 
-This project demonstrates how to design and implement a **production-ready architecture** with:
+This architecture demonstrates:
 
-* 🔐 Strong security (IAM, private networking, encryption)
-* ⚡ Event-driven processing (Lambda)
-* 📦 Containerized application (Docker on EC2)
-* 📊 Monitoring & alerting (CloudWatch)
-* 🏗️ Infrastructure as Code ready (Terraform)
+* 🔐 Zero public exposure of compute resources
+* 🔒 End-to-end encryption using HTTPS (ACM)
+* ⚡ Event-driven processing using Lambda
+* 📦 Containerized backend on EC2 (private)
+* 🏗️ Infrastructure-as-Code ready (Terraform)
 
 ---
 
@@ -31,62 +29,82 @@ This project demonstrates how to design and implement a **production-ready archi
 
 ## 🔄 How It Works
 
-1. User accesses the app via **Application Load Balancer (ALB)**
-2. ALB routes traffic to **EC2 (Docker app)**
-3. User uploads an image:
+1. User connects securely via **HTTPS (ACM) → Application Load Balancer**
+2. ALB routes traffic to **EC2 (private subnet)**
+3. User uploads image:
 
    * Stored in **S3 (private bucket)**
-   * Triggers **Lambda**
-4. Lambda extracts metadata and sends it back via ALB
-5. Backend stores metadata in **RDS (MySQL)**
+   * Triggers **Lambda (inside VPC)**
+4. Lambda extracts metadata and sends it via ALB
+5. Backend stores metadata in **RDS (private subnet)**
 
 ---
 
 ## 🏗️ AWS Services Used
 
-* VPC (Public + Private Subnets)
-* EC2 (Dockerized Web App)
-* Application Load Balancer (ALB)
+* VPC (Public + Private Subnets across AZs)
+* Application Load Balancer (HTTPS + ACM)
+* EC2 (Private Subnet – Dockerized App)
 * S3 (Private Storage)
-* Lambda (Event Processing)
+* Lambda (VPC-enabled Processing)
 * RDS MySQL (Private Database)
-* IAM (Role-based Access)
+* IAM (Least Privilege Access)
 * Secrets Manager (Secure Credentials)
 * KMS (Encryption)
 * CloudWatch (Monitoring & Alerts)
+* ACM (SSL/TLS Certificate Management)
 
 ---
 
-## 🔐 Security Highlights
+## 🔐 Security Highlights (Production-Grade)
 
-* ✅ Private RDS (no public access)
+* ✅ EC2 deployed in **private subnet (no public IP)**
+* ✅ HTTPS enforced using **ACM + ALB**
 * ✅ S3 Block Public Access enabled
+* ✅ RDS isolated in private subnet
+* ✅ Lambda runs inside VPC
 * ✅ No hardcoded credentials (IAM roles)
 * ✅ Secrets stored in AWS Secrets Manager
-* ✅ Encrypted using AWS KMS
-* ✅ ALB as the only public entry point
-* ✅ Security group-based access control
+* ✅ Encryption via AWS KMS
+* ✅ Security groups enforce least privilege
+* ✅ ALB is the **only public entry point**
 
 ---
 
 ## ⚙️ Key Features
 
 * Event-driven architecture using S3 + Lambda
-* Secure secret management (no plaintext passwords)
-* Fully containerized backend using Docker
-* Production-style monitoring and alerting
+* Fully private backend (no direct internet exposure)
+* Secure secret management
+* Dockerized application deployment
+* Production-ready monitoring and alerting
 * Designed for Terraform automation
+
+---
+
+## 🌐 Networking Design
+
+* Public Subnets:
+
+  * ALB (Internet-facing)
+* Private Subnets:
+
+  * EC2 (Application)
+  * RDS (Database)
+  * Lambda (VPC-enabled)
+
+👉 Outbound internet access handled via **NAT Gateway** (required for Lambda/EC2)
 
 ---
 
 ## 🧪 Testing the Application
 
-1. Open the ALB DNS in browser
+1. Open the ALB HTTPS URL
 2. Upload an image
 3. Verify:
 
-   * Image appears in S3
-   * Lambda is triggered
+   * Image stored in S3
+   * Lambda triggered
    * Metadata processed successfully
 
 ---
@@ -100,21 +118,22 @@ CloudWatch Dashboard includes:
 
 Alarm:
 
-* Triggers when Lambda Errors > 0
+* Triggered when **Lambda Errors > 0**
 
 ---
 
 ## 🏗️ Terraform (Coming Next)
 
-This project is being extended to fully automate infrastructure using Terraform.
+This project is designed to be fully automated using Terraform.
 
 ### Planned Automation:
 
-* VPC + Subnets
-* EC2 + IAM Roles
-* ALB + Target Groups
-* RDS + Security Groups
-* S3 + Lambda Trigger
+* VPC + Subnets + NAT Gateway
+* ALB + ACM (HTTPS)
+* EC2 (Private)
+* RDS (Private)
+* Lambda (VPC-enabled)
+* S3 + Event Triggers
 * Secrets Manager
 * CloudWatch Dashboards & Alarms
 
@@ -122,7 +141,7 @@ This project is being extended to fully automate infrastructure using Terraform.
 
 ## 📁 Project Structure
 
-```bash
+```
 photoshare-aws-terraform/
 │
 ├── terraform/
@@ -136,21 +155,23 @@ photoshare-aws-terraform/
 
 ## 🧠 Learning Outcomes
 
-* Designing secure AWS architectures
-* Implementing least-privilege IAM
-* Building event-driven systems
+* Designing secure VPC architectures
+* Implementing private compute patterns
+* Using ACM for HTTPS in ALB
+* Running Lambda inside VPC
 * Managing secrets securely
-* Monitoring distributed systems
+* Building event-driven systems
+* Observability with CloudWatch
 
 ---
 
 ## 🔥 Future Improvements
 
-* HTTPS using ACM
-* Auto Scaling Group
-* CloudFront CDN
+* Auto Scaling Group (replace single EC2)
+* CloudFront CDN integration
+* WAF (Web Application Firewall)
 * CI/CD pipeline (GitHub Actions)
-* Full Terraform automation
+* Terraform modules (fully production-ready)
 
 ---
 
