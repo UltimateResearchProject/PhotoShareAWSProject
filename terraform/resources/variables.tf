@@ -24,3 +24,17 @@ variable "enable_nat_gateway" {
   description = "Enable NAT (costly)"
   default     = false
 }
+variable "aws_region" {
+  description = "AWS region for resources"
+  type        = string
+}
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
+
+variable "project_name" {
+  description = "Project name"
+  type        = string
+}
